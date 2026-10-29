@@ -79,6 +79,24 @@
     cards.forEach(c => { c.addEventListener('mouseenter', () => set(c)); c.addEventListener('focusin', () => set(c)); });
   });
 
+  /* ---------- floating WhatsApp + back to top: appear once the hero is behind you ---------- */
+  const fab = $('.wa-fab'), toTop = $('.to-top');
+  if (fab) {
+    let hinted = false;
+    const onFab = () => {
+      const show = scrollY > innerHeight * .6;
+      fab.classList.toggle('is-shown', show);
+      toTop?.classList.toggle('is-shown', scrollY > innerHeight * 2);
+      // touch has no hover, so the label introduces itself once
+      if (show && !hinted && matchMedia('(hover: none)').matches) {
+        hinted = true; fab.classList.add('is-hinting');
+        setTimeout(() => fab.classList.remove('is-hinting'), 3200);
+      }
+    };
+    addEventListener('scroll', onFab, { passive: true }); onFab();
+    toTop?.addEventListener('click', () => scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }));
+  }
+
   /* ---------- hero carousel: photo, last word of the h1 and the glass card move together ---------- */
   const heroCard = $('.hero-card');
   if (heroCard) {
